@@ -10,9 +10,10 @@ const createUser = async function (abcd, xyz) {
   //the second parameter is always the response
   let data = abcd.body;
   let savedData = await userModel.create(data);
-  console.log(abcd.newAtribute);
+  //console.log(abcd.newAtribute);
   xyz.send({ msg: savedData });
 };
+
 
 const loginUser = async function (req, res) {
   let userName = req.body.emailId;
@@ -50,7 +51,8 @@ const getUserData = async function (req, res) {
   //If no token is present in the request header return error. This means the user is not logged in.
   if (!token) return res.send({ status: false, msg: "token must be present" });
 
-  console.log(token);
+  //console.log(token);
+  
 
   // If a token is present then decode the token with verify function
   // verify takes two inputs:
@@ -88,10 +90,20 @@ const updateUser = async function (req, res) {
   }
 
   let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
+  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData,{$New:true});
   res.send({ status: updatedUser, data: updatedUser });
 };
+const deleteData = async function(req,res){
+  let userId = req.params.userId
+  let update = await userModel.findByIdAndUpdate(userId, {isDeleted: true}, {new:true})
+  res.send(update)
 
+};
+
+
+
+
+module.exports.deleteData = deleteData;
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
